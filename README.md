@@ -29,7 +29,12 @@ you like.
 
 Features of this shader include:
 
-- Iris refraction and depth
+- [X] Iris refraction and depth
+- [ ] Configurable iris colors
+- [ ] A set of textures for various iris patterns
+- [ ] Configurable limbus width and darkness
+- [ ] Pupil diameter, width, and height are separately configurable
+- [ ] Iris caustics
 
 ## Credits
 
