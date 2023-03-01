@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://cva2ta1i5sro0"]
+
+[ext_resource type="ArrayMesh" uid="uid://dbkwf73wi3ml6" path="res://addons/digital_human/meshes/eye.res" id="1_8litc"]
+[ext_resource type="Texture2D" uid="uid://c6giq5hike0qa" path="res://addons/digital_human/textures/showcase.exr" id="3_ccbmf"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j42ri"]
+panorama = ExtResource("3_ccbmf")
+
+[sub_resource type="Sky" id="Sky_n77mu"]
+sky_material = SubResource("PanoramaSkyMaterial_j42ri")
+
+[sub_resource type="Environment" id="Environment_bufyt"]
+background_mode = 2
+sky = SubResource("Sky_n77mu")
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+
+[node name="Root" type="Node3D"]
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bufyt")
+
+[node name="Eye" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_8litc")

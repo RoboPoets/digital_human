@@ -1,0 +1,49 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://4v56vao38wmj"
+path="res://.godot/imported/showcase.glb-9d30fbde61e8efe3273f7528566ad66b.scn"
+
+[deps]
+
+source_file="res://addons/digital_human/meshes/showcase.glb"
+dest_files=["res://.godot/imported/showcase.glb-9d30fbde61e8efe3273f7528566ad66b.scn"]
+
+[params]
+
+nodes/root_type="Node3D"
+nodes/root_name="Scene Root"
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+meshes/ensure_tangents=true
+meshes/generate_lods=false
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+skins/use_named_skins=true
+animation/import=false
+animation/fps=30
+animation/trimming=false
+import_script/path=""
+_subresources={
+"materials": {
+"eye": {
+"use_external/enabled": true,
+"use_external/path": "res://addons/digital_human/materials/eye.tres"
+}
+},
+"meshes": {
+"showcase_eye": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/make_streamable": "",
+"save_to_file/path": "res://addons/digital_human/meshes/eye.res"
+}
+}
+}
