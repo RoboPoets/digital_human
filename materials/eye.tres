@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://d0sl2teme2dib"]
+
+[ext_resource type="Shader" path="res://addons/digital_human/shaders/eye.gdshader" id="1_q652r"]
+[ext_resource type="Texture2D" uid="uid://cpoxmqd6ybmm7" path="res://addons/digital_human/textures/eye_tangent.webp" id="2_houb2"]
+[ext_resource type="Texture2D" uid="uid://d0uiijjg8q1lc" path="res://addons/digital_human/textures/iris_depth.webp" id="3_4fjrc"]
+[ext_resource type="Texture2D" uid="uid://c7yppc28sd1g2" path="res://addons/digital_human/textures/iris_color.webp" id="3_ng8jj"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_q652r")
+shader_parameter/refraction_strength = 1.0
+shader_parameter/pupil_scale = 1.0
+shader_parameter/iris_depth_scale = 1.2
+shader_parameter/iris_uv_radius = 0.15
+shader_parameter/limbus_uv_width = 0.035
+shader_parameter/eye_tangents = ExtResource("2_houb2")
+shader_parameter/iris_displacement = ExtResource("3_4fjrc")
+shader_parameter/iris_color = ExtResource("3_ng8jj")
