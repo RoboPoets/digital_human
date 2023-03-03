@@ -29,7 +29,7 @@ uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.35;
 
 /*
  * This currently behaves the same as the built-in refract() function.
- * It's spelled out here in case we want to implement future changes 
+ * It's spelled out here in case we want to implement future changes
  * to the refraction algorithm.
  */
 vec3 refraction(vec3 incidence_vector, vec3 surface_normal) {
@@ -74,37 +74,37 @@ float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
 
 void fragment() {
 	const float uv_scale = 1.0;
-	
+
 	vec2 uv_scaled = scale_uv_from_center(UV, uv_scale);
 	float iris_mask = iris_uv_mask(uv_scaled, iris_uv_radius, limbus_uv_width);
 	vec2 uv_refracted = uv_scaled;
-	
+
 	if (refraction_strength > 0.0) {
 		// Compute the direction vectors and surface normals
 		vec3 surface_normal_ws = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 		vec3 incidence_vector_ws = normalize((INV_VIEW_MATRIX * vec4(VIEW, 0.0)).xyz);
 		vec3 refraction_vector_ws = -refraction(incidence_vector_ws, surface_normal_ws);
-		
+
 		// Transform tangent space normal to world space
 		mat3 tangent_to_world = mat3(INV_VIEW_MATRIX) * mat3(TANGENT,BINORMAL,NORMAL);
 		vec3 tangent_normal = vec3(texture(eye_tangents, UV).xy, 1.0) * 2.0 - 1.0;
 		vec3 tangent_normal_ws = tangent_to_world * tangent_normal;
-		
+
 		// Calculate iris depth and refraction offset
 		float iris_view_ratio = mix(0.3, 1.0, pow(dot(incidence_vector_ws, tangent_normal_ws), 2.0));
 		float depth_plane_offset = texture(iris_displacement, vec2(iris_uv_radius * uv_scale + 0.5, 0.5)).x;
 		vec3 iris_depth = max(texture(iris_displacement, UV).xyz - depth_plane_offset, 0.0) * iris_depth_scale;
 		vec3 offset = (iris_depth / iris_view_ratio) * refraction_vector_ws;
-		
+
 		// Transform offset back to tangent space
 		vec3 tangent_base_u = normalize(tangent_to_world * vec3(1.0, 0.0, 0.0));
 		vec3 tangent_project = dot(tangent_base_u, tangent_normal_ws) * tangent_normal_ws;
 		vec3 tangent_normalized = normalize(tangent_base_u - tangent_project);
 		float offset_x = dot(tangent_normalized, offset);
 		float offset_y = dot(cross(tangent_normalized, tangent_normal_ws), offset);
-		vec2 uv_offset = vec2(-offset_x, offset_y);
-		
-		vec2 iris_refraction = uv_scaled + iris_uv_radius * vec2(-1, 1) * uv_offset;
+		vec2 uv_offset = vec2(offset_x, offset_y);
+
+		vec2 iris_refraction = uv_scaled + iris_uv_radius * uv_offset;
 		vec2 eye_refraction = mix(uv_scaled, iris_refraction, iris_mask);
 		uv_refracted = mix(uv_scaled, eye_refraction, refraction_strength);
 	}
@@ -114,7 +114,7 @@ void fragment() {
 	uv_iris = scale_pupils(uv_iris, pupil_scale);
 	vec3 iris = texture(iris_color, uv_iris).rgb * iris_brightness;
 	iris *= (1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power));
-	
+
 	// Sample sclera texture and mix with iris
 	vec3 sclera = texture(sclera_color, uv_scaled).rgb * sclera_brightness;
 	float shadow_mask = sphere_mask(uv_scaled, vec2(0.5), eye_shadow_radius, eye_shadow_hardness);
