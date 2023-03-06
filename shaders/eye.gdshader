@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
 
 group_uniforms textures;
-uniform sampler2D eye_tangents : repeat_disable, filter_linear_mipmap, hint_normal;
+uniform sampler2D eye_tangents : repeat_disable, filter_linear_mipmap;
 uniform sampler2D iris_displacement : repeat_disable;
 uniform sampler2D iris_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
 uniform sampler2D sclera_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
@@ -87,7 +87,7 @@ void fragment() {
 
 		// Transform tangent space normal to world space
 		mat3 tangent_to_world = mat3(INV_VIEW_MATRIX) * mat3(TANGENT,BINORMAL,NORMAL);
-		vec3 tangent_normal = vec3(texture(eye_tangents, UV).xy, 1.0) * 2.0 - 1.0;
+		vec3 tangent_normal = texture(eye_tangents, UV).xyz * 2.0 - 1.0;
 		vec3 tangent_normal_ws = tangent_to_world * tangent_normal;
 
 		// Calculate iris depth and refraction offset

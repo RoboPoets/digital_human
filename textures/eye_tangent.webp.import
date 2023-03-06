@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpoxmqd6ybmm7"
-path.s3tc="res://.godot/imported/eye_tangent.webp-272a26f7025af9c4f7d1afd3dd1bb150.s3tc.ctex"
+path.bptc="res://.godot/imported/eye_tangent.webp-272a26f7025af9c4f7d1afd3dd1bb150.bptc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -12,15 +12,15 @@ metadata={
 [deps]
 
 source_file="res://addons/digital_human/textures/eye_tangent.webp"
-dest_files=["res://.godot/imported/eye_tangent.webp-272a26f7025af9c4f7d1afd3dd1bb150.s3tc.ctex"]
+dest_files=["res://.godot/imported/eye_tangent.webp-272a26f7025af9c4f7d1afd3dd1bb150.bptc.ctex"]
 
 [params]
 
 compress/mode=2
-compress/high_quality=false
+compress/high_quality=true
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=2
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
