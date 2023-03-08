@@ -24,8 +24,8 @@ uniform float pupil_scale : hint_range(0.0, 2.0, 0.01) = 1.0;
 group_uniforms sclera;
 uniform float sclera_brightness : hint_range(0.0, 2.0, 0.01) = 0.9;
 uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
-uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.65;
-uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.35;
+uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
+uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.55;
 
 /*
  * This currently behaves the same as the built-in refract() function.
@@ -63,13 +63,12 @@ vec2 scale_pupils(vec2 uv, float scale) {
  */
 float iris_uv_mask(vec2 uv, float iris_radius, float limbus_width) {
 	float radius = (length(uv - 0.5) - (iris_radius - limbus_width)) / limbus_width;
-	float mask = smoothstep(0.0, 1.0, clamp(1.0 - radius, 0.0, 1.0));
-	return mask;
+	return smoothstep(0.0, 1.0, clamp(1.0 - radius, 0.0, 1.0));
 }
 
 float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
 	float ratio = radius * clamp(hardness, 0.0, 0.999);
-	return 1.0 - clamp(distance(uv, center) - ratio, 0.0, 1.0) / (radius - ratio);
+	return smoothstep(1.0, 0.0, (distance(uv, center) - ratio) / (radius - ratio));
 }
 
 void fragment() {
