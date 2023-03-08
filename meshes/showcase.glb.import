@@ -48,4 +48,4 @@ _subresources={
 }
 }
 }
-gltf/embedded_image_handling=1
+gltf/embedded_image_handling=0
