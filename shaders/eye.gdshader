@@ -113,7 +113,7 @@ void fragment() {
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
 	uv_iris = scale_pupils(uv_iris, pupil_scale);
 	vec3 iris = texture(iris_color, uv_iris).rgb * iris_brightness;
-	iris *= (1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power));
+	iris *= clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
 
 	// Sample sclera texture and mix with iris
 	vec3 sclera = texture(sclera_color, uv_scaled).rgb * sclera_brightness;
