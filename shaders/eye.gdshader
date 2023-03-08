@@ -20,6 +20,8 @@ uniform float limbus_power : hint_range(4.0, 24.0, 0.1) = 8.0;
 
 group_uniforms pupil;
 uniform float pupil_scale : hint_range(0.0, 2.0, 0.01) = 1.0;
+uniform float pupil_scale_x : hint_range(0.0, 2.0, 0.01) = 1.0;
+uniform float pupil_scale_y : hint_range(0.0, 2.0, 0.01) = 1.0;
 
 group_uniforms sclera;
 uniform float sclera_brightness : hint_range(0.0, 2.0, 0.01) = 0.9;
@@ -49,7 +51,7 @@ vec2 scale_uv_from_center(vec2 uv, float scale) {
 /*
  * Scale the pupil. A scale value of 1.0 matches the original texture.
  */
-vec2 scale_pupils(vec2 uv, float scale) {
+vec2 scale_pupils(vec2 uv, vec2 scale) {
 	vec2 uv_centered = uv - 0.5;
 	float uv_length = length(uv_centered);
 	vec2 uv_max = normalize(uv_centered) * 0.5;
@@ -110,7 +112,7 @@ void fragment() {
 
 	// Sample iris texture and apply limbus shading
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
-	uv_iris = scale_pupils(uv_iris, pupil_scale);
+	uv_iris = scale_pupils(uv_iris, vec2(pupil_scale_x, pupil_scale_y) * pupil_scale) ;
 	vec3 iris = texture(iris_color, uv_iris).rgb * iris_brightness;
 	iris *= clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
 
