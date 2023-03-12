@@ -6,12 +6,15 @@ uniform sampler2D eye_tangents : repeat_disable, filter_linear_mipmap;
 uniform sampler2D iris_displacement : repeat_disable;
 uniform sampler2D iris_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
 uniform sampler2D sclera_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
+uniform sampler2D normal_map : repeat_disable, filter_linear_mipmap, hint_normal;
 
 group_uniforms iris;
 uniform float refraction_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
 uniform float iris_depth_scale : hint_range(0.0, 4.0, 0.01) = 1.2;
 uniform float iris_uv_radius : hint_range(0.1, 0.2, 0.01) = 0.15;
 uniform float iris_brightness : hint_range(0.0, 2.0, 0.01) = 1.0;
+uniform float iris_roughness : hint_range(0.0, 1.0, 0.01) = 0.1;
+uniform float iris_specular : hint_range(0.0, 1.0, 0.01) = 0.4;
 
 group_uniforms limbus;
 uniform float limbus_uv_width : hint_range(0.02, 0.05, 0.001) = 0.035;
@@ -25,6 +28,8 @@ uniform float pupil_scale_y : hint_range(0.0, 2.0, 0.01) = 1.0;
 
 group_uniforms sclera;
 uniform float sclera_brightness : hint_range(0.0, 2.0, 0.01) = 0.9;
+uniform float sclera_roughness : hint_range(0.0, 1.0, 0.01) = 0.1;
+uniform float sclera_specular : hint_range(0.0, 1.0, 0.01) = 0.4;
 uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
 uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
 uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.55;
@@ -120,4 +125,7 @@ void fragment() {
 	vec3 sclera = texture(sclera_color, uv_scaled).rgb * sclera_brightness;
 	float shadow_mask = sphere_mask(uv_scaled, vec2(0.5), eye_shadow_radius, eye_shadow_hardness);
 	ALBEDO = mix(sclera, iris, iris_mask) * mix(eye_shadow_color, vec3(1.0), shadow_mask);
+	NORMAL_MAP = texture(normal_map, uv_scaled).rgb;
+	ROUGHNESS = mix(sclera_roughness, iris_roughness, iris_mask);
+	SPECULAR = mix(sclera_specular, iris_specular, iris_mask);
 }
