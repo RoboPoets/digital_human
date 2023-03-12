@@ -30,10 +30,10 @@ group_uniforms sclera;
 uniform float sclera_brightness : hint_range(0.0, 2.0, 0.01) = 0.9;
 uniform float sclera_roughness : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float sclera_specular : hint_range(0.0, 1.0, 0.01) = 0.4;
-uniform float veins_power : hint_range(0.0, 3.0, 0.01) = 1.0;
+uniform float veins_power : hint_range(0.0, 3.0, 0.01) = 0.5;
 uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
 uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
-uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.55;
+uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.75;
 
 /*
  * This currently behaves the same as the built-in refract() function.

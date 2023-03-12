@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0uiijjg8q1lc"
-path.bptc="res://.godot/imported/iris_depth.webp-8fe58946f1630a7d4f7b4238a3898518.bptc.ctex"
+uid="uid://tvvgg6ed6f21"
+path.s3tc="res://.godot/imported/sclera_normal.webp-b0c539fd99ffd957e8d41f9249bf35bb.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,16 +11,16 @@ metadata={
 
 [deps]
 
-source_file="res://addons/digital_human/textures/iris_depth.webp"
-dest_files=["res://.godot/imported/iris_depth.webp-8fe58946f1630a7d4f7b4238a3898518.bptc.ctex"]
+source_file="res://addons/digital_human/textures/sclera_normal.webp"
+dest_files=["res://.godot/imported/sclera_normal.webp-b0c539fd99ffd957e8d41f9249bf35bb.s3tc.ctex"]
 
 [params]
 
 compress/mode=2
-compress/high_quality=true
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1

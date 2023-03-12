@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0uiijjg8q1lc"
-path.bptc="res://.godot/imported/iris_depth.webp-8fe58946f1630a7d4f7b4238a3898518.bptc.ctex"
+uid="uid://ohsrxdt418qc"
+path.bptc="res://.godot/imported/sclera_color.webp-81673558424e84fe0172ac39a50f74ca.bptc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/digital_human/textures/iris_depth.webp"
-dest_files=["res://.godot/imported/iris_depth.webp-8fe58946f1630a7d4f7b4238a3898518.bptc.ctex"]
+source_file="res://addons/digital_human/textures/sclera_color.webp"
+dest_files=["res://.godot/imported/sclera_color.webp-81673558424e84fe0172ac39a50f74ca.bptc.ctex"]
 
 [params]
 
