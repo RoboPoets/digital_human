@@ -23,6 +23,7 @@ shader_parameter/pupil_scale_y = 1.0
 shader_parameter/sclera_brightness = 0.9
 shader_parameter/sclera_roughness = 0.1
 shader_parameter/sclera_specular = 0.25
+shader_parameter/veins_power = 1.0
 shader_parameter/eye_shadow_color = Color(0.717647, 0.345098, 0.247059, 1)
 shader_parameter/eye_shadow_radius = 0.47
 shader_parameter/eye_shadow_hardness = 0.79
