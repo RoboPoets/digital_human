@@ -19,6 +19,7 @@ shader_parameter/iris_specular = 0.25
 shader_parameter/limbus_uv_width = 0.035
 shader_parameter/limbus_darkness = 2.1
 shader_parameter/limbus_power = 8.0
+shader_parameter/limbus_color = Color(0, 0, 0, 1)
 shader_parameter/pupil_scale = 1.0
 shader_parameter/pupil_scale_x = 1.0
 shader_parameter/pupil_scale_y = 1.0

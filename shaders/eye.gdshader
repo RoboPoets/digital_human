@@ -12,7 +12,7 @@ group_uniforms iris;
 uniform float refraction_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
 uniform float iris_depth_scale : hint_range(0.0, 4.0, 0.01) = 1.2;
 uniform float iris_uv_radius : hint_range(0.1, 0.2, 0.01) = 0.15;
-uniform float iris_brightness : hint_range(0.0, 2.0, 0.01) = 1.0;
+uniform float iris_brightness : hint_range(0.0, 4.0, 0.01) = 1.0;
 uniform float iris_roughness : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float iris_specular : hint_range(0.0, 1.0, 0.01) = 0.4;
 
@@ -20,6 +20,7 @@ group_uniforms limbus;
 uniform float limbus_uv_width : hint_range(0.02, 0.05, 0.001) = 0.035;
 uniform float limbus_darkness : hint_range(2.0, 2.5, 0.01) = 2.1;
 uniform float limbus_power : hint_range(4.0, 24.0, 0.1) = 8.0;
+uniform vec3 limbus_color : source_color = vec3(0.0);
 
 group_uniforms pupil;
 uniform float pupil_scale : hint_range(0.0, 2.0, 0.01) = 1.0;
@@ -119,8 +120,8 @@ void fragment() {
 	// Sample iris texture and apply limbus shading
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
 	uv_iris = scale_pupils(uv_iris, vec2(pupil_scale_x, pupil_scale_y) * pupil_scale) ;
-	vec3 iris = texture(iris_color, uv_iris).rgb * iris_brightness;
-	iris *= clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
+	float limbus_mask = clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
+	vec3 iris = mix(limbus_color, texture(iris_color, uv_iris).rgb * iris_brightness, limbus_mask);
 
 	// Sample sclera texture and mix with iris
 	vec3 sclera = pow(texture(sclera_color, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
