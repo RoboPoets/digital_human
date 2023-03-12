@@ -1,9 +1,9 @@
-[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://d0sl2teme2dib"]
+[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://djigntaiy3h6x"]
 
 [ext_resource type="Shader" path="res://addons/digital_human/shaders/eye.gdshader" id="1_q652r"]
 [ext_resource type="Texture2D" uid="uid://cpoxmqd6ybmm7" path="res://addons/digital_human/textures/eye_tangent.webp" id="2_houb2"]
 [ext_resource type="Texture2D" uid="uid://d0uiijjg8q1lc" path="res://addons/digital_human/textures/iris_depth.webp" id="3_4fjrc"]
-[ext_resource type="Texture2D" uid="uid://c7yppc28sd1g2" path="res://addons/digital_human/textures/iris_color.webp" id="3_ng8jj"]
+[ext_resource type="Texture2D" uid="uid://c7yppc28sd1g2" path="res://addons/digital_human/textures/iris_color_green.webp" id="3_ejcty"]
 [ext_resource type="Texture2D" uid="uid://tvvgg6ed6f21" path="res://addons/digital_human/textures/sclera_normal.webp" id="5_2l66w"]
 [ext_resource type="Texture2D" uid="uid://ohsrxdt418qc" path="res://addons/digital_human/textures/sclera_color.webp" id="6_bg537"]
 
@@ -30,8 +30,8 @@ shader_parameter/veins_power = 0.5
 shader_parameter/eye_shadow_color = Color(0.717647, 0.345098, 0.247059, 1)
 shader_parameter/eye_shadow_radius = 0.45
 shader_parameter/eye_shadow_hardness = 0.75
-shader_parameter/eye_tangents = ExtResource("2_houb2")
-shader_parameter/iris_displacement = ExtResource("3_4fjrc")
-shader_parameter/iris_color = ExtResource("3_ng8jj")
-shader_parameter/sclera_color = ExtResource("6_bg537")
-shader_parameter/normal_map = ExtResource("5_2l66w")
+shader_parameter/tangent_texture = ExtResource("2_houb2")
+shader_parameter/normal_texture = ExtResource("5_2l66w")
+shader_parameter/depth_texture = ExtResource("3_4fjrc")
+shader_parameter/iris_texture = ExtResource("3_ejcty")
+shader_parameter/sclera_texture = ExtResource("6_bg537")

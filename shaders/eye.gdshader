@@ -2,11 +2,11 @@ shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
 
 group_uniforms textures;
-uniform sampler2D eye_tangents : repeat_disable, filter_linear_mipmap;
-uniform sampler2D iris_displacement : repeat_disable;
-uniform sampler2D iris_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
-uniform sampler2D sclera_color : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
-uniform sampler2D normal_map : repeat_disable, filter_linear_mipmap, hint_normal;
+uniform sampler2D tangent_texture : repeat_disable, filter_linear_mipmap;
+uniform sampler2D normal_texture : repeat_disable, filter_linear_mipmap, hint_normal;
+uniform sampler2D depth_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
+uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
+uniform sampler2D sclera_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
 
 group_uniforms iris;
 uniform float refraction_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
@@ -67,14 +67,16 @@ vec2 scale_pupils(vec2 uv, vec2 scale) {
 }
 
 /*
- * Returns the iris mask modified by the values for the eye's limbus
- * area.
+ * Returns the iris mask modified by the values for the eye's limbus area.
  */
 float iris_uv_mask(vec2 uv, float iris_radius, float limbus_width) {
 	float radius = (length(uv - 0.5) - (iris_radius - limbus_width)) / limbus_width;
 	return smoothstep(0.0, 1.0, clamp(1.0 - radius, 0.0, 1.0));
 }
 
+/*
+ * Helper function to create a smooth spherical gradient mask.
+ */
 float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
 	float ratio = radius * clamp(hardness, 0.0, 0.999);
 	return smoothstep(1.0, 0.0, (distance(uv, center) - ratio) / (radius - ratio));
@@ -95,13 +97,13 @@ void fragment() {
 
 		// Transform tangent space normal to world space
 		mat3 tangent_to_world = mat3(INV_VIEW_MATRIX) * mat3(TANGENT,BINORMAL,NORMAL);
-		vec3 tangent_normal = texture(eye_tangents, UV).xyz * 2.0 - 1.0;
+		vec3 tangent_normal = texture(tangent_texture, UV).xyz * 2.0 - 1.0;
 		vec3 tangent_normal_ws = tangent_to_world * tangent_normal;
 
 		// Calculate iris depth and refraction offset
 		float iris_view_ratio = mix(0.3, 1.0, pow(dot(incidence_vector_ws, tangent_normal_ws), 2.0));
-		float depth_plane_offset = texture(iris_displacement, vec2(iris_uv_radius * uv_scale + 0.5, 0.5)).x;
-		vec3 iris_depth = max(texture(iris_displacement, UV).xyz - depth_plane_offset, 0.0) * iris_depth_scale;
+		float depth_plane_offset = texture(depth_texture, vec2(iris_uv_radius * uv_scale + 0.5, 0.5)).x;
+		vec3 iris_depth = max(texture(depth_texture, UV).xyz - depth_plane_offset, 0.0) * iris_depth_scale;
 		vec3 offset = (iris_depth / iris_view_ratio) * refraction_vector_ws;
 
 		// Transform offset back to tangent space
@@ -121,13 +123,13 @@ void fragment() {
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
 	uv_iris = scale_pupils(uv_iris, vec2(pupil_scale_x, pupil_scale_y) * pupil_scale) ;
 	float limbus_mask = clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
-	vec3 iris = mix(limbus_color, texture(iris_color, uv_iris).rgb * iris_brightness, limbus_mask);
+	vec3 iris = mix(limbus_color, texture(iris_texture, uv_iris).rgb * iris_brightness, limbus_mask);
 
 	// Sample sclera texture and mix with iris
-	vec3 sclera = pow(texture(sclera_color, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
+	vec3 sclera = pow(texture(sclera_texture, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
 	float shadow_mask = sphere_mask(uv_scaled, vec2(0.5), eye_shadow_radius, eye_shadow_hardness);
 	ALBEDO = mix(sclera, iris, iris_mask) * mix(eye_shadow_color, vec3(1.0), shadow_mask);
-	NORMAL_MAP = texture(normal_map, uv_scaled).rgb;
+	NORMAL_MAP = texture(normal_texture, uv_scaled).rgb;
 	ROUGHNESS = mix(sclera_roughness, iris_roughness, iris_mask);
 	SPECULAR = mix(sclera_specular, iris_specular, iris_mask);
 }
