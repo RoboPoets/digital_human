@@ -36,6 +36,11 @@ uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
 uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
 uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.75;
 
+group_uniforms subsurface_scattering;
+uniform float sss_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform float sss_strength_iris : hint_range(0.0, 1.0, 0.01) = 0.0;
+uniform float sss_strength_sclera : hint_range(0.0, 1.0, 0.01) = 0.5;
+
 /*
  * This currently behaves the same as the built-in refract() function.
  * It's spelled out here in case we want to implement future changes
@@ -128,8 +133,10 @@ void fragment() {
 	// Sample sclera texture and mix with iris
 	vec3 sclera = pow(texture(sclera_texture, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
 	float shadow_mask = sphere_mask(uv_scaled, vec2(0.5), eye_shadow_radius, eye_shadow_hardness);
+	
 	ALBEDO = mix(sclera, iris, iris_mask) * mix(eye_shadow_color, vec3(1.0), shadow_mask);
 	NORMAL_MAP = texture(normal_texture, uv_scaled).rgb;
 	ROUGHNESS = mix(sclera_roughness, iris_roughness, iris_mask);
 	SPECULAR = mix(sclera_specular, iris_specular, iris_mask);
+	SSS_STRENGTH = sss_strength * (iris_mask * sss_strength_iris + (1.0 - iris_mask) * sss_strength_sclera);
 }

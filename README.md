@@ -35,6 +35,7 @@ Features of this shader include:
 - [X] Configurable limbus width and darkness
 - [X] Pupil diameter, width, and height are separately configurable
 - [ ] Parallax occlusion mapping
+- [X] Subsurface scattering
 - [ ] Subsurface scattering
 - [ ] Iris caustics
 
