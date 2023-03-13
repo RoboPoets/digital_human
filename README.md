@@ -31,10 +31,11 @@ Features of this shader include:
 
 - [X] Iris refraction and depth
 - [ ] Configurable iris colors
-- [ ] A set of textures for various iris patterns
+- [X] A set of textures for various iris patterns
 - [X] Configurable limbus width and darkness
 - [X] Pupil diameter, width, and height are separately configurable
 - [ ] Parallax occlusion mapping
+- [ ] Subsurface scattering
 - [ ] Iris caustics
 
 ## Credits
