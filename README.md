@@ -36,9 +36,4 @@ Features of this shader include:
 - [X] Pupil diameter, width, and height are separately configurable
 - [ ] Parallax occlusion mapping
 - [X] Subsurface scattering
-- [ ] Subsurface scattering
 - [ ] Iris caustics
-
-## Credits
-
-- Trekker Monument HDRI from [Poly Haven](https://polyhaven.com/a/trekker_monument), CC0
