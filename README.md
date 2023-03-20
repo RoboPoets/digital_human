@@ -13,6 +13,8 @@ where noted differently in the [Credits](#credits) section.
 
 ## Eye Shader
 
+![Eye Showcase](docs/eye.jpg)
+
 Eye shaders in the past often required the models to have the iris cavity modeled
 out and used multiple materials to create the effect of depth and refraction. This
 shader works on a single mesh, refraction and depth are created entirely in the
@@ -21,8 +23,8 @@ shader and can be controlled by shader parameters.
 For this setup to work, the mesh should be unwrapped in a certain way. The front
 half of the mesh should be projected onto the UV plane with the center of the iris
 in the center of the plane. The back half of the eye can be projected the same way
-or be scaled down and pushed into one of the corners, it doesn't really matter. Up
-in UV space should match Up in model space.
+or be scaled down and pushed into one of the corners, it doesn't really matter.
+"Up" in UV space should match "Up" in model space.
 
 The project contains an eye model that can be exported, studied, and used any way
 you like.
@@ -33,7 +35,11 @@ Features of this shader include:
 - [ ] Configurable iris colors
 - [X] A set of textures for various iris patterns
 - [X] Configurable limbus width and darkness
-- [X] Pupil diameter, width, and height are separately configurable
+- [X] Pupil diameter, width and height are separately configurable
 - [X] Parallax occlusion mapping
 - [X] Subsurface scattering
 - [ ] Iris caustics
+
+## Credits
+
+This repository doesn't use any third-party assets at the time of writing.
