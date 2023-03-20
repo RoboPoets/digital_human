@@ -5,7 +5,7 @@ group_uniforms textures;
 uniform sampler2D tangent_texture : repeat_disable, filter_linear_mipmap;
 uniform sampler2D normal_texture : repeat_disable, filter_linear_mipmap, hint_normal;
 uniform sampler2D depth_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
-uniform sampler2D displacement_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
+uniform sampler2D displacement_texture : repeat_disable, filter_linear_mipmap, hint_default_white;
 uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
 uniform sampler2D sclera_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
 
@@ -95,8 +95,8 @@ float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
 }
 
 /*
- * Apply parallax occlusion mapping to the UV, given a view direction and a 
- * surface normal, both in tangent space. This is a modified version of the 
+ * Apply parallax occlusion mapping to the UV, given a view direction and a
+ * surface normal, both in tangent space. This is a modified version of the
  * implementation at https://learnopengl.com/Advanced-Lighting/Parallax-Mapping.
  * It was changed to work with a regular heightmap texture and it uses a
  * reference plane that allows offsetting the initial depth value. This can be
@@ -107,7 +107,7 @@ vec2 pom(vec2 uv, vec3 view_dir, vec3 normal) {
 	float weight = abs(dot(normal, view_dir));
 	float num_layers = mix(displace_max_layers, displace_min_layers, weight);
 	float layer_depth = 1.0 / num_layers;
-		
+
 	// Loop through the layers to find the best match
 	float current_depth = displace_reference_plane;
 	float depth = texture(displacement_texture, uv).r;
@@ -173,7 +173,7 @@ void fragment() {
 		vec3 tangent_view_dir = normalize(normalize(-VERTEX) * mat3(TANGENT,-BINORMAL,NORMAL));
 		uv_iris = pom(uv_iris, tangent_view_dir, tangent_normal);
 	}
-	
+
 	// Apply limbus shading and sample iris texture
 	float limbus_mask = clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
 	vec3 iris = mix(limbus_color, texture(iris_texture, uv_iris).rgb * iris_brightness, limbus_mask);
