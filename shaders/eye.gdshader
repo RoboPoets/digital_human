@@ -134,7 +134,7 @@ void fragment() {
 	vec2 uv_refracted = uv_scaled;
 	vec3 tangent_normal = vec3(0.0, 0.0, 1.0);
 
-	if (refraction_strength > 0.0) {
+	if (refraction_strength > 0.0 && iris_mask > 0.0) {
 		// Compute the direction vectors and surface normals
 		vec3 surface_normal_ws = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
 		vec3 incidence_vector_ws = normalize((INV_VIEW_MATRIX * vec4(VIEW, 0.0)).xyz);
