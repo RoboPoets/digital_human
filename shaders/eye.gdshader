@@ -5,6 +5,7 @@ group_uniforms textures;
 uniform sampler2D tangent_texture : repeat_disable, filter_linear_mipmap;
 uniform sampler2D normal_texture : repeat_disable, filter_linear_mipmap, hint_normal;
 uniform sampler2D depth_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
+uniform sampler2D displacement_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
 uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
 uniform sampler2D sclera_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
 
@@ -35,6 +36,12 @@ uniform float veins_power : hint_range(0.0, 3.0, 0.01) = 0.5;
 uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
 uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
 uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.75;
+
+group_uniforms displacement;
+uniform float displace_strength : hint_range(0.0, 32.0, 0.01) = 10.0;
+uniform float displace_min_layers : hint_range(1.0, 32.0, 1.0) = 8.0;
+uniform float displace_max_layers : hint_range(1.0, 32.0, 1.0) = 32.0;
+uniform float displace_reference_plane : hint_range(0.0, 1.0, 0.01) = 1.0;
 
 group_uniforms subsurface_scattering;
 uniform float sss_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
@@ -87,12 +94,45 @@ float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
 	return smoothstep(1.0, 0.0, (distance(uv, center) - ratio) / (radius - ratio));
 }
 
+/*
+ * Apply parallax occlusion mapping to the UV, given a view direction and a 
+ * surface normal, both in tangent space. This is a modified version of the 
+ * implementation at https://learnopengl.com/Advanced-Lighting/Parallax-Mapping.
+ * It was changed to work with a regular heightmap texture and it uses a
+ * reference plane that allows offsetting the initial depth value. This can be
+ * necessary after replacing the default displacement texture with a custom one.
+ */
+vec2 pom(vec2 uv, vec3 view_dir, vec3 normal) {
+	// Calculate number of layers and each layer's normalized depth
+	float weight = abs(dot(normal, view_dir));
+	float num_layers = mix(displace_max_layers, displace_min_layers, weight);
+	float layer_depth = 1.0 / num_layers;
+		
+	// Loop through the layers to find the best match
+	float current_depth = displace_reference_plane;
+	float depth = texture(displacement_texture, uv).r;
+	vec2 delta = (view_dir.xy * displace_strength * 0.01) / num_layers;
+	while(current_depth > depth) {
+		uv -= delta;
+		depth = texture(displacement_texture, uv).r;
+		current_depth -= layer_depth;
+	}
+
+	// Interpolate between the two closest layers to get the final UV offset
+	vec2 prev_uv = uv + delta;
+	float after_depth = depth - current_depth;
+	float before_depth = texture(displacement_texture, prev_uv).r - current_depth - layer_depth;
+	weight = before_depth / (before_depth - after_depth);
+	return mix(prev_uv, uv, weight);
+}
+
 void fragment() {
 	const float uv_scale = 1.0;
 
 	vec2 uv_scaled = scale_uv_from_center(UV, uv_scale);
 	float iris_mask = iris_uv_mask(uv_scaled, iris_uv_radius, limbus_uv_width);
 	vec2 uv_refracted = uv_scaled;
+	vec3 tangent_normal = vec3(0.0, 0.0, 1.0);
 
 	if (refraction_strength > 0.0) {
 		// Compute the direction vectors and surface normals
@@ -102,7 +142,7 @@ void fragment() {
 
 		// Transform tangent space normal to world space
 		mat3 tangent_to_world = mat3(INV_VIEW_MATRIX) * mat3(TANGENT,BINORMAL,NORMAL);
-		vec3 tangent_normal = texture(tangent_texture, UV).xyz * 2.0 - 1.0;
+		tangent_normal = texture(tangent_texture, UV).xyz * 2.0 - 1.0;
 		vec3 tangent_normal_ws = tangent_to_world * tangent_normal;
 
 		// Calculate iris depth and refraction offset
@@ -124,16 +164,25 @@ void fragment() {
 		uv_refracted = mix(uv_scaled, eye_refraction, refraction_strength);
 	}
 
-	// Sample iris texture and apply limbus shading
+	// Calculate iris UVs and apply pupil scale
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
 	uv_iris = scale_pupils(uv_iris, vec2(pupil_scale_x, pupil_scale_y) * pupil_scale) ;
+
+	// Apply parallax occlusion mapping to the iris UVs
+	if (displace_strength > 0.0 && iris_mask > 0.0) {
+		vec3 tangent_view_dir = normalize(normalize(-VERTEX) * mat3(TANGENT,-BINORMAL,NORMAL));
+		uv_iris = pom(uv_iris, tangent_view_dir, tangent_normal);
+	}
+	
+	// Apply limbus shading and sample iris texture
 	float limbus_mask = clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
 	vec3 iris = mix(limbus_color, texture(iris_texture, uv_iris).rgb * iris_brightness, limbus_mask);
 
 	// Sample sclera texture and mix with iris
 	vec3 sclera = pow(texture(sclera_texture, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
 	float shadow_mask = sphere_mask(uv_scaled, vec2(0.5), eye_shadow_radius, eye_shadow_hardness);
-	
+
+	// Apply all of it to the shader outputs
 	ALBEDO = mix(sclera, iris, iris_mask) * mix(eye_shadow_color, vec3(1.0), shadow_mask);
 	NORMAL_MAP = texture(normal_texture, uv_scaled).rgb;
 	ROUGHNESS = mix(sclera_roughness, iris_roughness, iris_mask);
