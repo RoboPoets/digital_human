@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://ck7tjlvnywiow"]
+
+[ext_resource type="Shader" path="res://addons/digital_human/shaders/eye_simple.gdshader" id="1_80ssg"]
+[ext_resource type="Texture2D" uid="uid://dlq5miuxaoh8s" path="res://addons/digital_human/textures/iris_color_brown.webp" id="2_sadds"]
+[ext_resource type="Texture2D" uid="uid://tvvgg6ed6f21" path="res://addons/digital_human/textures/sclera_normal.webp" id="3_krvwd"]
+[ext_resource type="Texture2D" uid="uid://ohsrxdt418qc" path="res://addons/digital_human/textures/sclera_color.webp" id="4_6pqpi"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_80ssg")
+shader_parameter/iris_uv_radius = 0.15
+shader_parameter/iris_brightness = 1.5
+shader_parameter/iris_roughness = 0.1
+shader_parameter/iris_specular = 0.4
+shader_parameter/limbus_uv_width = 0.035
+shader_parameter/limbus_darkness = 2.35
+shader_parameter/limbus_power = 13.0
+shader_parameter/limbus_color = Color(0, 0, 0, 1)
+shader_parameter/pupil_scale = 0.9
+shader_parameter/pupil_scale_x = 1.0
+shader_parameter/pupil_scale_y = 1.0
+shader_parameter/sclera_brightness = 0.66
+shader_parameter/sclera_roughness = 0.1
+shader_parameter/sclera_specular = 0.4
+shader_parameter/veins_power = 0.25
+shader_parameter/eye_shadow_color = Color(0.662745, 0.32549, 0.164706, 1)
+shader_parameter/eye_shadow_radius = 0.47
+shader_parameter/eye_shadow_hardness = 0.55
+shader_parameter/normal_texture = ExtResource("3_krvwd")
+shader_parameter/sclera_texture = ExtResource("4_6pqpi")
+shader_parameter/iris_texture = ExtResource("2_sadds")
