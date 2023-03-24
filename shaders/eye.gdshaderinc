@@ -1,21 +1,36 @@
-shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
-
 group_uniforms textures;
-uniform sampler2D tangent_texture : repeat_disable, filter_linear_mipmap;
 uniform sampler2D normal_texture : repeat_disable, filter_linear_mipmap, hint_normal;
+#ifdef USE_REFRACTION
+uniform sampler2D tangent_texture : repeat_disable, filter_linear_mipmap;
 uniform sampler2D depth_texture : repeat_disable, filter_linear_mipmap, hint_default_black;
+#endif
+#ifdef USE_POM
 uniform sampler2D displacement_texture : repeat_disable, filter_linear_mipmap, hint_default_white;
-uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
+#endif
 uniform sampler2D sclera_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_white;
+#ifdef USE_COLOR_MASK
+uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, hint_default_white;
+#else
+uniform sampler2D iris_texture : repeat_disable, filter_linear_mipmap, source_color, hint_default_black;
+#endif
 
 group_uniforms iris;
+#ifdef USE_REFRACTION
 uniform float refraction_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
 uniform float iris_depth_scale : hint_range(0.0, 4.0, 0.01) = 1.2;
+#endif
 uniform float iris_uv_radius : hint_range(0.1, 0.2, 0.01) = 0.15;
 uniform float iris_brightness : hint_range(0.0, 4.0, 0.01) = 1.0;
 uniform float iris_roughness : hint_range(0.0, 1.0, 0.01) = 0.1;
 uniform float iris_specular : hint_range(0.0, 1.0, 0.01) = 0.4;
+#ifdef USE_COLOR_MASK
+uniform vec3 iris_color_outer_1 : source_color = vec3(0.67, 0.83, 0.42);
+uniform vec3 iris_color_inner_1 : source_color = vec3(0.74, 0.47, 0.32);
+uniform vec3 iris_color_outer_2 : source_color = vec3(0.39, 0.65, 0.74);
+uniform vec3 iris_color_inner_2 : source_color = vec3(0.96, 1.0, 0.3);
+uniform float iris_color_radius : hint_range(0.0, 1.0, 0.01) = 0.5;
+uniform float iris_color_hardness : hint_range(0.0, 1.0, 0.01) = 0.2;
+#endif
 
 group_uniforms limbus;
 uniform float limbus_uv_width : hint_range(0.02, 0.05, 0.001) = 0.035;
@@ -37,16 +52,20 @@ uniform vec3 eye_shadow_color : source_color = vec3(0.52, 0.32, 0.2);
 uniform float eye_shadow_radius : hint_range(0.0, 1.0, 0.01) = 0.45;
 uniform float eye_shadow_hardness : hint_range(0.0, 1.0, 0.01) = 0.75;
 
+#ifdef USE_POM
 group_uniforms displacement;
 uniform float displace_strength : hint_range(0.0, 32.0, 0.01) = 10.0;
 uniform float displace_min_layers : hint_range(1.0, 32.0, 1.0) = 8.0;
 uniform float displace_max_layers : hint_range(1.0, 32.0, 1.0) = 32.0;
 uniform float displace_reference_plane : hint_range(0.0, 1.0, 0.01) = 1.0;
+#endif
 
+#ifdef USE_SSS
 group_uniforms subsurface_scattering;
 uniform float sss_strength : hint_range(0.0, 1.0, 0.01) = 1.0;
 uniform float sss_strength_iris : hint_range(0.0, 1.0, 0.01) = 0.0;
 uniform float sss_strength_sclera : hint_range(0.0, 1.0, 0.01) = 0.5;
+#endif
 
 /*
  * This currently behaves the same as the built-in refract() function.
@@ -68,6 +87,14 @@ vec2 scale_uv_from_center(vec2 uv, float scale) {
 }
 
 /*
+ * Helper function to create a smooth spherical gradient mask.
+ */
+float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
+	float ratio = radius * clamp(hardness, 0.0, 0.999);
+	return smoothstep(1.0, 0.0, (distance(uv, center) - ratio) / (radius - ratio));
+}
+
+/*
  * Scale the pupil. A scale value of 1.0 matches the original texture.
  */
 vec2 scale_pupils(vec2 uv, vec2 scale) {
@@ -79,19 +106,11 @@ vec2 scale_pupils(vec2 uv, vec2 scale) {
 }
 
 /*
- * Returns the iris mask modified by the values for the eye's limbus area.
+ * Return the iris mask modified by the values for the eye's limbus area.
  */
 float iris_uv_mask(vec2 uv, float iris_radius, float limbus_width) {
 	float radius = (length(uv - 0.5) - (iris_radius - limbus_width)) / limbus_width;
 	return smoothstep(0.0, 1.0, clamp(1.0 - radius, 0.0, 1.0));
-}
-
-/*
- * Helper function to create a smooth spherical gradient mask.
- */
-float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
-	float ratio = radius * clamp(hardness, 0.0, 0.999);
-	return smoothstep(1.0, 0.0, (distance(uv, center) - ratio) / (radius - ratio));
 }
 
 /*
@@ -103,6 +122,7 @@ float sphere_mask(vec2 uv, vec2 center, float radius, float hardness) {
  * necessary after replacing the default displacement texture with a custom one.
  */
 vec2 pom(vec2 uv, vec3 view_dir, vec3 normal) {
+#ifdef USE_POM
 	// Calculate number of layers and each layer's normalized depth
 	float weight = abs(dot(normal, view_dir));
 	float num_layers = mix(displace_max_layers, displace_min_layers, weight);
@@ -124,6 +144,9 @@ vec2 pom(vec2 uv, vec3 view_dir, vec3 normal) {
 	float before_depth = texture(displacement_texture, prev_uv).r - current_depth - layer_depth;
 	weight = before_depth / (before_depth - after_depth);
 	return mix(prev_uv, uv, weight);
+#else
+	return uv;
+#endif
 }
 
 void fragment() {
@@ -131,9 +154,10 @@ void fragment() {
 
 	vec2 uv_scaled = scale_uv_from_center(UV, uv_scale);
 	float iris_mask = iris_uv_mask(uv_scaled, iris_uv_radius, limbus_uv_width);
-	vec2 uv_refracted = uv_scaled;
 	vec3 tangent_normal = vec3(0.0, 0.0, 1.0);
+	vec2 uv_refracted = uv_scaled;
 
+#ifdef USE_REFRACTION
 	if (refraction_strength > 0.0 && iris_mask > 0.0) {
 		// Compute the direction vectors and surface normals
 		vec3 surface_normal_ws = normalize((INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz);
@@ -163,20 +187,33 @@ void fragment() {
 		vec2 eye_refraction = mix(uv_scaled, iris_refraction, iris_mask);
 		uv_refracted = mix(uv_scaled, eye_refraction, refraction_strength);
 	}
+#endif
 
 	// Calculate iris UVs and apply pupil scale
 	vec2 uv_iris = (uv_refracted - 0.5) * (1.0 / (iris_uv_radius * 2.0)) + 0.5;
 	uv_iris = scale_pupils(uv_iris, vec2(pupil_scale_x, pupil_scale_y) * pupil_scale) ;
 
+#ifdef USE_POM
 	// Apply parallax occlusion mapping to the iris UVs
 	if (displace_strength > 0.0 && iris_mask > 0.0) {
 		vec3 tangent_view_dir = normalize(normalize(-VERTEX) * mat3(TANGENT,-BINORMAL,NORMAL));
 		uv_iris = pom(uv_iris, tangent_view_dir, tangent_normal);
 	}
+#endif
 
 	// Apply limbus shading and sample iris texture
 	float limbus_mask = clamp((1.0 - pow(length((uv_iris - 0.5) * limbus_darkness), limbus_power)), 0.0, 1.0);
-	vec3 iris = mix(limbus_color, texture(iris_texture, uv_iris).rgb * iris_brightness, limbus_mask);
+	vec3 iris_color = texture(iris_texture, uv_iris).rgb;
+
+#ifdef USE_COLOR_MASK
+	float mask = sphere_mask(uv_iris, vec2(0.5), iris_color_radius, iris_color_hardness);
+	vec3 col1 = mix(iris_color_outer_1 * iris_color.r, iris_color_inner_1 * iris_color.g, mask);
+	vec3 col2 = mix(iris_color_outer_2 * iris_color.r, iris_color_inner_2 * iris_color.g, mask);
+	vec3 col3 = mix(col2, col1, iris_color.b);
+	iris_color = col3;
+#endif
+
+	vec3 iris = mix(limbus_color, iris_color * iris_brightness, limbus_mask);
 
 	// Sample sclera texture and mix with iris
 	vec3 sclera = pow(texture(sclera_texture, uv_scaled).rgb, vec3(veins_power)) * sclera_brightness;
@@ -187,5 +224,7 @@ void fragment() {
 	NORMAL_MAP = texture(normal_texture, uv_scaled).rgb;
 	ROUGHNESS = mix(sclera_roughness, iris_roughness, iris_mask);
 	SPECULAR = mix(sclera_specular, iris_specular, iris_mask);
+#ifdef USE_SSS
 	SSS_STRENGTH = sss_strength * (iris_mask * sss_strength_iris + (1.0 - iris_mask) * sss_strength_sclera);
+#endif
 }

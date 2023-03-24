@@ -1,0 +1,52 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://6aiw850gvwbf"]
+
+[ext_resource type="Shader" path="res://addons/digital_human/shaders/eye_colorized.gdshader" id="1_6vlfl"]
+[ext_resource type="Texture2D" uid="uid://d0uiijjg8q1lc" path="res://addons/digital_human/textures/iris_depth.webp" id="2_6xnog"]
+[ext_resource type="Texture2D" uid="uid://d2wsqpn4nnodw" path="res://addons/digital_human/textures/iris_displacement.webp" id="3_kovxf"]
+[ext_resource type="Texture2D" uid="uid://7r1ujhqhv4p7" path="res://addons/digital_human/textures/iris_color_mask.webp" id="4_3mxtv"]
+[ext_resource type="Texture2D" uid="uid://tvvgg6ed6f21" path="res://addons/digital_human/textures/sclera_normal.webp" id="5_e3fdm"]
+[ext_resource type="Texture2D" uid="uid://ohsrxdt418qc" path="res://addons/digital_human/textures/sclera_color.webp" id="6_7xv4v"]
+[ext_resource type="Texture2D" uid="uid://cpoxmqd6ybmm7" path="res://addons/digital_human/textures/eye_tangent.webp" id="7_62sv8"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_6vlfl")
+shader_parameter/displace_strength = 12.0
+shader_parameter/displace_min_layers = 8.0
+shader_parameter/displace_max_layers = 32.0
+shader_parameter/displace_reference_plane = 0.75
+shader_parameter/refraction_strength = 1.0
+shader_parameter/iris_depth_scale = 1.2
+shader_parameter/iris_uv_radius = 0.15
+shader_parameter/iris_brightness = 1.0
+shader_parameter/iris_roughness = 0.1
+shader_parameter/iris_specular = 0.25
+shader_parameter/iris_color_outer_1 = Color(0.67, 0.83, 0.42, 1)
+shader_parameter/iris_color_inner_1 = Color(0.74, 0.47, 0.32, 1)
+shader_parameter/iris_color_outer_2 = Color(0.39, 0.65, 0.74, 1)
+shader_parameter/iris_color_inner_2 = Color(0.96, 1, 0.3, 1)
+shader_parameter/iris_color_radius = 0.5
+shader_parameter/iris_color_hardness = 0.2
+shader_parameter/limbus_uv_width = 0.035
+shader_parameter/limbus_darkness = 2.3
+shader_parameter/limbus_power = 6.0
+shader_parameter/limbus_color = Color(0, 0, 0, 1)
+shader_parameter/pupil_scale = 0.9
+shader_parameter/pupil_scale_x = 1.0
+shader_parameter/pupil_scale_y = 1.0
+shader_parameter/sclera_brightness = 0.9
+shader_parameter/sclera_roughness = 0.1
+shader_parameter/sclera_specular = 0.4
+shader_parameter/veins_power = 0.5
+shader_parameter/eye_shadow_color = Color(0.717647, 0.345098, 0.247059, 1)
+shader_parameter/eye_shadow_radius = 0.45
+shader_parameter/eye_shadow_hardness = 0.75
+shader_parameter/sss_strength = 1.0
+shader_parameter/sss_strength_iris = 0.0
+shader_parameter/sss_strength_sclera = 0.5
+shader_parameter/normal_texture = ExtResource("5_e3fdm")
+shader_parameter/tangent_texture = ExtResource("7_62sv8")
+shader_parameter/depth_texture = ExtResource("2_6xnog")
+shader_parameter/displacement_texture = ExtResource("3_kovxf")
+shader_parameter/sclera_texture = ExtResource("6_7xv4v")
+shader_parameter/iris_texture = ExtResource("4_3mxtv")

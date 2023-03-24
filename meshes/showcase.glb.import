@@ -32,7 +32,7 @@ _subresources={
 "materials": {
 "eye": {
 "use_external/enabled": true,
-"use_external/path": "res://addons/digital_human/materials/eye.tres"
+"use_external/path": "res://addons/digital_human/materials/eye_textured.tres"
 }
 },
 "meshes": {
