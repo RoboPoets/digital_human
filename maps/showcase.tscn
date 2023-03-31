@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d38jsq6up7xyl"]
+[gd_scene load_steps=8 format=3 uid="uid://d38jsq6up7xyl"]
 
 [ext_resource type="ArrayMesh" uid="uid://dbkwf73wi3ml6" path="res://addons/digital_human/meshes/eye.res" id="1_8litc"]
 [ext_resource type="PackedScene" uid="uid://di1hph73hsx01" path="res://addons/digital_human/maps/pedestal.tscn" id="2_732dj"]
+[ext_resource type="ArrayMesh" uid="uid://4v56vao38wmj" path="res://addons/digital_human/meshes/skin.res" id="3_okp4e"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nt0ad"]
 ground_color = Color(1, 0.939189, 0.871621, 1)
@@ -17,6 +18,10 @@ ssr_enabled = true
 ssao_enabled = true
 ssil_enabled = true
 sdfgi_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fgrk2"]
+albedo_color = Color(0.788235, 0.788235, 0.788235, 1)
+roughness = 0.24
 
 [node name="Root" type="Node3D"]
 
@@ -40,6 +45,11 @@ skeleton = NodePath("../..")
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5, 0, 0)
 
 [node name="Skin" type="Node" parent="."]
+
+[node name="SkinMesh" type="MeshInstance3D" parent="Skin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = ExtResource("3_okp4e")
+surface_material_override/1 = SubResource("StandardMaterial3D_fgrk2")
 
 [node name="Pedestal" parent="Skin" instance=ExtResource("2_732dj")]
 
