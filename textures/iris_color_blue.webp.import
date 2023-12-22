@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bgoka34iafo0s"
-path.bptc="res://.godot/imported/iris_color_blue.webp-7f8604c4cabffd5b446be505c3365edd.bptc.ctex"
+path.s3tc="res://.godot/imported/iris_color_blue.webp-7f8604c4cabffd5b446be505c3365edd.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -12,12 +12,12 @@ metadata={
 [deps]
 
 source_file="res://addons/digital_human/textures/iris_color_blue.webp"
-dest_files=["res://.godot/imported/iris_color_blue.webp-7f8604c4cabffd5b446be505c3365edd.bptc.ctex"]
+dest_files=["res://.godot/imported/iris_color_blue.webp-7f8604c4cabffd5b446be505c3365edd.s3tc.ctex"]
 
 [params]
 
 compress/mode=2
-compress/high_quality=true
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0

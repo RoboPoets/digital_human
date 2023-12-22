@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7yppc28sd1g2"
-path.bptc="res://.godot/imported/iris_color_green.webp-e5a894c62c1ce87b42c0f426e5101394.bptc.ctex"
+path.s3tc="res://.godot/imported/iris_color_green.webp-e5a894c62c1ce87b42c0f426e5101394.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -12,12 +12,12 @@ metadata={
 [deps]
 
 source_file="res://addons/digital_human/textures/iris_color_green.webp"
-dest_files=["res://.godot/imported/iris_color_green.webp-e5a894c62c1ce87b42c0f426e5101394.bptc.ctex"]
+dest_files=["res://.godot/imported/iris_color_green.webp-e5a894c62c1ce87b42c0f426e5101394.s3tc.ctex"]
 
 [params]
 
 compress/mode=2
-compress/high_quality=true
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
