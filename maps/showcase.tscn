@@ -1,64 +1,38 @@
-[gd_scene load_steps=8 format=3 uid="uid://d38jsq6up7xyl"]
+[gd_scene load_steps=6 format=3 uid="uid://duyle4ile3uu1"]
 
-[ext_resource type="ArrayMesh" uid="uid://dbkwf73wi3ml6" path="res://addons/digital_human/meshes/eye.res" id="1_8litc"]
-[ext_resource type="PackedScene" uid="uid://di1hph73hsx01" path="res://addons/digital_human/maps/pedestal.tscn" id="2_732dj"]
-[ext_resource type="ArrayMesh" uid="uid://4v56vao38wmj" path="res://addons/digital_human/meshes/skin.res" id="3_okp4e"]
+[ext_resource type="PackedScene" uid="uid://4v56vao38wmj" path="res://addons/digital_human/maps/showcase.glb" id="1_5nq16"]
+[ext_resource type="Material" uid="uid://djigntaiy3h6x" path="res://addons/digital_human/materials/eye_textured.tres" id="2_jyotr"]
 
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nt0ad"]
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_gm8p1"]
 ground_color = Color(1, 0.939189, 0.871621, 1)
 
 [sub_resource type="Sky" id="Sky_ti7dq"]
-sky_material = SubResource("PhysicalSkyMaterial_nt0ad")
+sky_material = SubResource("PhysicalSkyMaterial_gm8p1")
 
-[sub_resource type="Environment" id="Environment_bufyt"]
+[sub_resource type="Environment" id="Environment_kl822"]
 background_mode = 2
 sky = SubResource("Sky_ti7dq")
 tonemap_mode = 3
 ssr_enabled = true
+ssr_max_steps = 256
+ssr_fade_in = 1.0
 ssao_enabled = true
 ssil_enabled = true
 sdfgi_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fgrk2"]
-albedo_color = Color(0.788235, 0.788235, 0.788235, 1)
-roughness = 0.24
+[node name="Showcase" instance=ExtResource("1_5nq16")]
 
-[node name="Root" type="Node3D"]
+[node name="Lighting" type="Node" parent="." index="0"]
 
-[node name="Environment" type="Node" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" index="0"]
+environment = SubResource("Environment_kl822")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
-environment = SubResource("Environment_bufyt")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
-transform = Transform3D(0.846844, 0.356561, -0.394614, 0.102756, 0.618303, 0.779194, 0.521821, -0.700404, 0.486967, 0, 0, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting" index="1"]
+transform = Transform3D(0.985668, 0.0426082, -0.163233, 0.102341, 0.61819, 0.779338, 0.134115, -0.784873, 0.604969, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Eye" type="Node" parent="."]
+[node name="Eye" parent="." index="1"]
+surface_material_override/0 = ExtResource("2_jyotr")
 
-[node name="EyeMesh" type="MeshInstance3D" parent="Eye"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
-mesh = ExtResource("1_8litc")
-skeleton = NodePath("../..")
-
-[node name="Pedestal" parent="Eye" instance=ExtResource("2_732dj")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5, 0, 0)
-
-[node name="Skin" type="Node" parent="."]
-
-[node name="SkinMesh" type="MeshInstance3D" parent="Skin"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = ExtResource("3_okp4e")
-surface_material_override/1 = SubResource("StandardMaterial3D_fgrk2")
-
-[node name="Pedestal" parent="Skin" instance=ExtResource("2_732dj")]
-
-[node name="Hair" type="Node" parent="."]
-
-[node name="Pedestal" parent="Hair" instance=ExtResource("2_732dj")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 5, 0, 0)
-
-[node name="Bust" type="Node" parent="."]
-
-[node name="Pedestal" parent="Bust" instance=ExtResource("2_732dj")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 5)
+[node name="Bust" parent="." index="8"]
+surface_material_override/1 = ExtResource("2_jyotr")
