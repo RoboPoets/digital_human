@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://duyle4ile3uu1"]
+[gd_scene load_steps=9 format=3 uid="uid://duyle4ile3uu1"]
 
 [ext_resource type="PackedScene" uid="uid://4v56vao38wmj" path="res://addons/digital_human/maps/showcase.glb" id="1_5nq16"]
 [ext_resource type="Material" uid="uid://djigntaiy3h6x" path="res://addons/digital_human/materials/eye_textured.tres" id="2_jyotr"]
+[ext_resource type="Material" uid="uid://coxpcto04w658" path="res://addons/digital_human/materials/skin_light.tres" id="3_juvat"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_gm8p1"]
 ground_color = Color(1, 0.939189, 0.871621, 1)
@@ -20,6 +21,18 @@ ssao_enabled = true
 ssil_enabled = true
 sdfgi_enabled = true
 
+[sub_resource type="Shader" id="Shader_dq3me"]
+code = "shader_type spatial;
+
+void fragment() {
+	discard;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hphpv"]
+render_priority = 0
+shader = SubResource("Shader_dq3me")
+
 [node name="Showcase" instance=ExtResource("1_5nq16")]
 
 [node name="Lighting" type="Node" parent="." index="0"]
@@ -28,11 +41,15 @@ sdfgi_enabled = true
 environment = SubResource("Environment_kl822")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting" index="1"]
-transform = Transform3D(0.985668, 0.0426082, -0.163233, 0.102341, 0.61819, 0.779338, 0.134115, -0.784873, 0.604969, 0, 0, 0)
+transform = Transform3D(-0.990256, -0.0110755, 0.138823, 0.102341, 0.61819, 0.779338, -0.0944507, 0.785951, -0.611032, 0, 0, 0)
 shadow_enabled = true
 
 [node name="Eye" parent="." index="1"]
 surface_material_override/0 = ExtResource("2_jyotr")
+
+[node name="Skin" parent="." index="4"]
+surface_material_override/0 = ExtResource("3_juvat")
+surface_material_override/2 = SubResource("ShaderMaterial_hphpv")
 
 [node name="Bust" parent="." index="8"]
 surface_material_override/1 = ExtResource("2_jyotr")

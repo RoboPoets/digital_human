@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://coxpcto04w658"]
+
+[ext_resource type="Shader" path="res://addons/digital_human/shaders/skin.gdshader" id="1_ufw03"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ufw03")
+shader_parameter/skin_color = Color(0.658824, 0.529412, 0.501961, 1)
+shader_parameter/sss_strength = 1.0
