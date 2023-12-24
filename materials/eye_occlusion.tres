@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://ctisib0dx16se"]
+
+[ext_resource type="Shader" path="res://addons/digital_human/shaders/eye_occlusion.gdshader" id="1_lejj8"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_lejj8")
+shader_parameter/blur_strength = 0.0
+shader_parameter/blur_opacity = 1.0
