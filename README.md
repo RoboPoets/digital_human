@@ -10,6 +10,7 @@ where noted differently in the [Credits](#credits) section.
 ## What's in the Box?
 
 - [An eye shader & model](#eye-shader) with iris refraction and tons of configurable parameters
+- [A skin shader](#skin-shader) with lots of customizable elements, including make-up and a wrinkle system
 
 ## Eye Shader
 
@@ -39,6 +40,23 @@ Features of this shader include:
 - [X] Parallax occlusion mapping
 - [X] Subsurface scattering
 - [ ] Iris caustics
+
+## Skin Shader
+
+The skin shader uses a number of different textures to achieve a realistic look.
+The single most important part in getting characters to look lifelike is the quality
+of these textures. They are **Albedo**, **Normal**, **Roughness**, **Specular**,
+**Subsurface** and **Transmission**.
+
+Features of this shader include:
+
+- [X] Adjustable skin tone
+- [X] Subsurface scattering
+- [X] Light transmission
+- [ ] Tattoos
+- [ ] Make-up
+- [ ] Scars
+- [ ] Animatable wrinkles
 
 ## Credits
 
