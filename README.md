@@ -48,6 +48,28 @@ The single most important part in getting characters to look lifelike is the qua
 of these textures. They are **Albedo**, **Normal**, **Roughness**, **Specular**,
 **Subsurface** and **Transmission**.
 
+The albedo and normal textures serve the same purpose as for any other 3D model
+and provide color and surface detail information. The normal map can easily end up
+being too harsh and its strength can be controlled with a shader parameter.
+
+The roughness texture is pure black, which is probably surprising. The skin's roughness
+is calculated from the normal map and added to the roughness texture on import.
+This has several advantages, the main one being that the roughness changes along with
+the normals when using several normal maps for animating wrinkles in the face. The
+base roughness can be controlled with shader parameters, but it is possible to use
+a regular, artist-created roughness map as a base.
+
+The specular map controls the strength of specular highlights across the face and
+body. Specular highlights are stronger in places where skin is stretched tight.
+On the other hand, there should not be any inside pores or wrinkles. This is what
+this map controls.
+
+The subsurface and transmission textures control the strength of subsurface scattering
+across the skin. SSS is especially strong around the eyes, ears, nose and lips.
+The transmission texture controls how much light shines through a part of the body
+when it is lit from behind. This is typically strongest in the ears and the nose,
+as well as any other spot where skin is very thin.
+
 Features of this shader include:
 
 - [X] Adjustable skin tone
