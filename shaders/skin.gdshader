@@ -20,11 +20,23 @@ uniform float sss_strength : hint_range(0.0, 1.0) = 1.0;
 uniform float transmission_boost : hint_range(0.0, 1.0) = 0.0;
 uniform float transmission_depth = 2.0;
 
+group_uniforms tattoos;
+uniform float tattoo_opacity : hint_range(0.0, 1.0) = 1.0;
+uniform float tattoo_fade : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 tattoo_tint : source_color = vec4(1.0, 1.0, 1.0, 0.0);
+uniform sampler2D tattoo_texture : source_color, hint_default_transparent, filter_linear_mipmap, repeat_disable;
+
+group_uniforms makeup;
+uniform float makeup_normal_blend_weight: hint_range(0.0, 1.0) = 0.5;
+uniform sampler2D makeup_albedo_texture : source_color, hint_default_transparent, filter_linear_mipmap, repeat_disable;
+uniform sampler2D makeup_orm_texture : hint_roughness_g, filter_linear_mipmap, repeat_disable;
+uniform sampler2D makeup_normal_texture : hint_roughness_normal, filter_linear_mipmap, repeat_disable;
+
 group_uniforms textures;
 uniform sampler2D diffuse_texture : source_color, filter_linear_mipmap, repeat_disable;
 uniform sampler2D roughness_texture : hint_roughness_r, filter_linear_mipmap, repeat_disable;
 uniform sampler2D specular_texture : hint_default_black, filter_linear_mipmap, repeat_disable;
-uniform sampler2D normal_texture :  hint_roughness_normal, filter_linear_mipmap, repeat_disable;
+uniform sampler2D normal_texture : hint_roughness_normal, filter_linear_mipmap, repeat_disable;
 uniform sampler2D sss_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
 uniform sampler2D transmission_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
 uniform sampler2D ao_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
@@ -56,21 +68,44 @@ vec3 shift_hue(vec3 color, float shift) {
 void fragment() {
 	vec3 albedo = texture(diffuse_texture, UV).rgb;
 	ALBEDO = shift_hue(albedo, hue) * brightness;
+
+	vec4 tattoo = texture(tattoo_texture, UV);
+	vec4 tattoo_faded = textureLod(tattoo_texture, UV, 3.0);
+	tattoo = mix(tattoo, tattoo_faded, tattoo_fade);
+	tattoo.rgb = mix(tattoo.rgb, tattoo_tint.rgb, tattoo_tint.a);
+	tattoo.a *= tattoo_opacity;
+	ALBEDO = mix(ALBEDO, tattoo.rgb, tattoo.a);
+
 	ALBEDO += fresnel(8.0, NORMAL, VIEW) * edge_roughness;
+
+	// Apply makeup after fresnel because we expect most
+	// types of face paint to cover and thus negate peach fuzz.
+	vec4 makeup = texture(makeup_albedo_texture, UV);
+	ALBEDO = mix(ALBEDO, makeup.rgb, makeup.a);
+
+	vec3 makeup_orm = texture(makeup_orm_texture, UV).rgb;
 	AO = texture(ao_texture, UV).r;
+	AO = mix(AO, makeup_orm.r, makeup.a);
 
 	float spec_tex = texture(specular_texture, UV).r;
 	ROUGHNESS = texture(roughness_texture, UV).r + base_roughness;
 	ROUGHNESS *= mix(spec_roughness_min, spec_roughness_max, spec_tex);
 	ROUGHNESS += fresnel(3.0, NORMAL, VIEW) * edge_roughness;
 
+	// Same as for albedo, apply makeup after fresnel.
+	ROUGHNESS = mix(ROUGHNESS, makeup_orm.g, makeup.a);
+	METALLIC = mix(METALLIC, makeup_orm.b, makeup.a);
+
 	float specular = mix(0.15, 1.0, pow(spec_tex, 0.65));
 	specular = mix(specular, pow(specular, 0.5), fresnel(5.0, NORMAL, VIEW));
 	SPECULAR = base_specularity * specular;
-	NORMAL_MAP = texture(normal_texture, UV).rgb;
 	NORMAL_MAP_DEPTH = normal_depth;
+	NORMAL_MAP = texture(normal_texture, UV).rgb;
 
-	SSS_STRENGTH = texture(sss_texture, UV).r * sss_strength;
+	vec3 makeup_normal = texture(makeup_normal_texture, UV).rgb;
+	NORMAL_MAP = mix(NORMAL_MAP, makeup_normal, makeup.a * makeup_normal_blend_weight);
+
+	SSS_STRENGTH = texture(sss_texture, UV).r * sss_strength * (1.0 - makeup.a);
 	SSS_TRANSMITTANCE_DEPTH = transmission_depth * texture(transmission_texture, UV).r;
 	SSS_TRANSMITTANCE_BOOST = transmission_boost;
 	SSS_TRANSMITTANCE_COLOR = vec4(ALBEDO, 1.0);

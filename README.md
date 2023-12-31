@@ -62,7 +62,7 @@ a regular, artist-created roughness map as a base.
 The specular map controls the strength of specular highlights across the face and
 body. Specular highlights are stronger in places where skin is stretched tight.
 On the other hand, there should not be any inside pores or wrinkles. This is what
-this map controls.
+this map achieves.
 
 The subsurface and transmission textures control the strength of subsurface scattering
 across the skin. SSS is especially strong around the eyes, ears, nose and lips.
@@ -70,13 +70,18 @@ The transmission texture controls how much light shines through a part of the bo
 when it is lit from behind. This is typically strongest in the ears and the nose,
 as well as any other spot where skin is very thin.
 
+The tattoo layer reacts to subsurface scattering and provides parameters to age,
+tint and fade the tattoo. The make-up layer ignores subsurface scattering since it
+is painted on top of the skin in real life. It provides the full set of normal and
+PBR texture masks so that even intricate make-up and face paint patterns are possible.
+
 Features of this shader include:
 
 - [X] Adjustable skin tone
 - [X] Subsurface scattering
 - [X] Light transmission
-- [ ] Tattoos
-- [ ] Make-up
+- [X] Tattoos
+- [X] Make-up
 - [ ] Scars
 - [ ] Animatable wrinkles
 
