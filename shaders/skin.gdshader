@@ -21,12 +21,16 @@ uniform float transmission_boost : hint_range(0.0, 1.0) = 0.0;
 uniform float transmission_depth = 2.0;
 
 group_uniforms tattoos;
+uniform vec2 tattoo_scale = vec2(1.0);
+uniform vec2 tattoo_offset = vec2(0.0);
 uniform float tattoo_opacity : hint_range(0.0, 1.0) = 1.0;
 uniform float tattoo_fade : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 tattoo_tint : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 uniform sampler2D tattoo_texture : source_color, hint_default_transparent, filter_linear_mipmap, repeat_disable;
 
 group_uniforms makeup;
+uniform vec2 makeup_scale = vec2(1.0);
+uniform vec2 makeup_offset = vec2(0.0);
 uniform float makeup_normal_blend_weight: hint_range(0.0, 1.0) = 0.5;
 uniform sampler2D makeup_albedo_texture : source_color, hint_default_transparent, filter_linear_mipmap, repeat_disable;
 uniform sampler2D makeup_orm_texture : hint_roughness_g, filter_linear_mipmap, repeat_disable;
@@ -69,8 +73,8 @@ void fragment() {
 	vec3 albedo = texture(diffuse_texture, UV).rgb;
 	ALBEDO = shift_hue(albedo, hue) * brightness;
 
-	vec4 tattoo = texture(tattoo_texture, UV);
-	vec4 tattoo_faded = textureLod(tattoo_texture, UV, 3.0);
+	vec4 tattoo = texture(tattoo_texture, UV * tattoo_scale + tattoo_offset);
+	vec4 tattoo_faded = textureLod(tattoo_texture, UV * tattoo_scale + tattoo_offset, 3.0);
 	tattoo = mix(tattoo, tattoo_faded, tattoo_fade);
 	tattoo.rgb = mix(tattoo.rgb, tattoo_tint.rgb, tattoo_tint.a);
 	tattoo.a *= tattoo_opacity;
@@ -80,10 +84,10 @@ void fragment() {
 
 	// Apply makeup after fresnel because we expect most
 	// types of face paint to cover and thus negate peach fuzz.
-	vec4 makeup = texture(makeup_albedo_texture, UV);
+	vec4 makeup = texture(makeup_albedo_texture, UV * makeup_scale + makeup_offset);
 	ALBEDO = mix(ALBEDO, makeup.rgb, makeup.a);
 
-	vec3 makeup_orm = texture(makeup_orm_texture, UV).rgb;
+	vec3 makeup_orm = texture(makeup_orm_texture, UV * makeup_scale + makeup_offset).rgb;
 	AO = texture(ao_texture, UV).r;
 	AO = mix(AO, makeup_orm.r, makeup.a);
 
@@ -102,7 +106,7 @@ void fragment() {
 	NORMAL_MAP_DEPTH = normal_depth;
 	NORMAL_MAP = texture(normal_texture, UV).rgb;
 
-	vec3 makeup_normal = texture(makeup_normal_texture, UV).rgb;
+	vec3 makeup_normal = texture(makeup_normal_texture, UV * makeup_scale + makeup_offset).rgb;
 	NORMAL_MAP = mix(NORMAL_MAP, makeup_normal, makeup.a * makeup_normal_blend_weight);
 
 	SSS_STRENGTH = texture(sss_texture, UV).r * sss_strength * (1.0 - makeup.a);
