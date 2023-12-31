@@ -54,8 +54,9 @@ vec3 shift_hue(vec3 color, float shift) {
 }
 
 void fragment() {
-	vec3 albedo = texture(diffuse_texture,UV).rgb;
+	vec3 albedo = texture(diffuse_texture, UV).rgb;
 	ALBEDO = shift_hue(albedo, hue) * brightness;
+	ALBEDO += fresnel(8.0, NORMAL, VIEW) * edge_roughness;
 	AO = texture(ao_texture, UV).r;
 
 	float spec_tex = texture(specular_texture,UV).r;
