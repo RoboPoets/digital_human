@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_schlick_ggx,sss_mode_skin;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx, sss_mode_skin;
 
 group_uniforms color;
 uniform float hue: hint_range(-0.02, 0.02) = 0.0;
@@ -47,7 +47,7 @@ float fresnel(float exponent, vec3 normal, vec3 view)
  */
 vec3 shift_hue(vec3 color, float shift) {
 	vec3 p = vec3(0.55735) * dot(vec3(0.55735), color);
-	vec3 u = color-p;
+	vec3 u = color - p;
 	vec3 v = cross(vec3(0.55735), u);
 	color = u * cos(shift * 6.2832) + v * sin(shift * 6.2832) + p;
 	return color;
@@ -59,19 +59,19 @@ void fragment() {
 	ALBEDO += fresnel(8.0, NORMAL, VIEW) * edge_roughness;
 	AO = texture(ao_texture, UV).r;
 
-	float spec_tex = texture(specular_texture,UV).r;
-	ROUGHNESS = texture(roughness_texture,UV).r + base_roughness;
+	float spec_tex = texture(specular_texture, UV).r;
+	ROUGHNESS = texture(roughness_texture, UV).r + base_roughness;
 	ROUGHNESS *= mix(spec_roughness_min, spec_roughness_max, spec_tex);
 	ROUGHNESS += fresnel(3.0, NORMAL, VIEW) * edge_roughness;
 
 	float specular = mix(0.15, 1.0, pow(spec_tex, 0.65));
 	specular = mix(specular, pow(specular, 0.5), fresnel(5.0, NORMAL, VIEW));
 	SPECULAR = base_specularity * specular;
-	NORMAL_MAP = texture(normal_texture,UV).rgb;
+	NORMAL_MAP = texture(normal_texture, UV).rgb;
 	NORMAL_MAP_DEPTH = normal_depth;
 
-	SSS_STRENGTH= texture(sss_texture,UV).r * sss_strength;
-	SSS_TRANSMITTANCE_DEPTH=transmission_depth*texture(transmission_texture,UV).r;
-	SSS_TRANSMITTANCE_BOOST=transmission_boost;
-	SSS_TRANSMITTANCE_COLOR=vec4(ALBEDO, 1.0);
+	SSS_STRENGTH = texture(sss_texture, UV).r * sss_strength;
+	SSS_TRANSMITTANCE_DEPTH = transmission_depth * texture(transmission_texture, UV).r;
+	SSS_TRANSMITTANCE_BOOST = transmission_boost;
+	SSS_TRANSMITTANCE_COLOR = vec4(ALBEDO, 1.0);
 }
