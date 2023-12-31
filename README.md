@@ -82,7 +82,6 @@ Features of this shader include:
 - [X] Light transmission
 - [X] Tattoos
 - [X] Make-up
-- [ ] Scars
 - [ ] Animatable wrinkles
 
 ## Credits
