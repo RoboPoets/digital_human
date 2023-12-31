@@ -30,9 +30,9 @@ uniform sampler2D transmission_texture : hint_default_white, filter_linear_mipma
 uniform sampler2D ao_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
 
 /*
- * We use fresnel on the skin to limit the specularity at the edges of the
- * mesh. This can reduce specular artifacts and improve realism, noticeable
- * especially around the lips and eyes.
+ * We use fresnel for various effects on the skin to tweak attributes at the
+ * edges of the mesh and improve realism. Examples are simulating cheap peach
+ * fuzz and reducing specular artifacts, especially around the lips and eyes.
  */
 float fresnel(float exponent, vec3 normal, vec3 view)
 {
@@ -64,9 +64,7 @@ void fragment() {
 	ROUGHNESS *= mix(spec_roughness_min, spec_roughness_max, spec_tex);
 	ROUGHNESS += fresnel(3.0, NORMAL, VIEW) * edge_roughness;
 
-	float tex2 = spec_tex * 0.5;
-	float tex3 = mix(spec_tex, tex2, 0.5);
-	float specular = mix(0.15, 1.0, pow(tex3, 0.65));
+	float specular = mix(0.15, 1.0, pow(spec_tex, 0.65));
 	specular = mix(specular, pow(specular, 0.5), fresnel(5.0, NORMAL, VIEW));
 	SPECULAR = base_specularity * specular;
 	NORMAL_MAP = texture(normal_texture,UV).rgb;
