@@ -27,6 +27,7 @@ uniform sampler2D specular_texture : hint_default_black, filter_linear_mipmap, r
 uniform sampler2D normal_texture :  hint_roughness_normal, filter_linear_mipmap, repeat_disable;
 uniform sampler2D sss_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
 uniform sampler2D transmission_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
+uniform sampler2D ao_texture : hint_default_white, filter_linear_mipmap, repeat_disable;
 
 /*
  * We use fresnel on the skin to limit the specularity at the edges of the
@@ -55,6 +56,7 @@ vec3 shift_hue(vec3 color, float shift) {
 void fragment() {
 	vec3 albedo = texture(diffuse_texture,UV).rgb;
 	ALBEDO = shift_hue(albedo, hue) * brightness;
+	AO = texture(ao_texture, UV).r;
 
 	float spec_tex = texture(specular_texture,UV).r;
 	ROUGHNESS = texture(roughness_texture,UV).r + base_roughness;
